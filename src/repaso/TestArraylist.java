@@ -34,6 +34,6 @@ public class TestArraylist {
         if( cadenas.contains("Luisa") )
             System.out.println("ESTa!!!");
         
-        ArrayList<Patito> patitos;
+        ArrayList<Patito> patitos = new ArrayList<>();
     }
 }

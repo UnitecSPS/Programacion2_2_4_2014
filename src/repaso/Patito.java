@@ -25,5 +25,8 @@ public class Patito {
         this.raza = raza;
     }
     
+    public void nadar(){
+        System.out.println("Nadando en el agua azul");
+    }
     
 }

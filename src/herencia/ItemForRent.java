@@ -31,6 +31,10 @@ public class ItemForRent {
         this(c,"UNTITLED",0);
     }
     
+    public ItemForRent(){
+        this(-1);
+    }
+    
     public int getCode() {
         return code;
     }
@@ -67,5 +71,9 @@ public class ItemForRent {
         if(copies > 0)
             return price * days;
         return 0;
+    }
+    
+    public void quienSoy(){
+        System.out.println("SOY EL ITEM");
     }
 }

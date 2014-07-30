@@ -14,5 +14,15 @@ public class TestForRen {
     public static void main(String[] args) {
         MovieForRent movie = new MovieForRent(1,"Harry Potter",10);
         movie.code =2;
+        
+        ItemForRent ifr0 = new ItemForRent();
+        ifr0.quienSoy();
+        
+        //UPCASTING
+        ItemForRent ifr = new MovieForRent(2,"Avatar",9.99);
+        ifr.quienSoy();
+        
+        ItemForRent ifr2 = new GameForRent();
+        ifr2.quienSoy();
     }
 }

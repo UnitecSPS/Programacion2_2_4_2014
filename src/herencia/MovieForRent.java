@@ -23,4 +23,9 @@ public class MovieForRent extends ItemForRent {
     public void addActor(String name){
         actors.add(name);
     }
+    
+    @Override
+    public void quienSoy(){
+        System.out.println("SOY UNA MOVIE");
+    }
 }

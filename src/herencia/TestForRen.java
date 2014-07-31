@@ -18,11 +18,24 @@ public class TestForRen {
         ItemForRent ifr0 = new ItemForRent();
         ifr0.quienSoy();
         
-        //UPCASTING
+        //UPCASTING-----------------
         ItemForRent ifr = new MovieForRent(2,"Avatar",9.99);
         ifr.quienSoy();
         
         ItemForRent ifr2 = new GameForRent();
         ifr2.quienSoy();
+        
+        //DOWNCASTING----------------------
+        //1- INDIRECTO
+        if( ifr instanceof MovieForRent){
+            movie = (MovieForRent)ifr;
+            movie.title = "TITANIC";
+            System.out.println(ifr.title);
+            movie.addActor("Leonardo DiCaprio");
+            movie.printActors();
+        }
+        //2- DIRECTO
+        ((MovieForRent)ifr).addActor("Kate Winslet");
+        ((MovieForRent)ifr).printActors();
     }
 }

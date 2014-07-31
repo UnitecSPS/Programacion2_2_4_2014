@@ -24,6 +24,12 @@ public class MovieForRent extends ItemForRent {
         actors.add(name);
     }
     
+    public void printActors(){
+        for(String actor : actors){
+            System.out.println("-"+actor);
+        }
+    }
+    
     @Override
     public void quienSoy(){
         System.out.println("SOY UNA MOVIE");

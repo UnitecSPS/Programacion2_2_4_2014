@@ -13,6 +13,7 @@ package herencia;
 public class TestForRen {
     public static void main(String[] args) {
         MovieForRent movie = new MovieForRent(1,"Harry Potter",10);
+        System.out.println(movie);
         movie.code =2;
         
         ItemForRent ifr0 = new ItemForRent();

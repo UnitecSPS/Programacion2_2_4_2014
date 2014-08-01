@@ -76,4 +76,11 @@ public class ItemForRent {
     public void quienSoy(){
         System.out.println("SOY EL ITEM");
     }
+
+    @Override
+    public String toString() {
+        return "- code=" + code + ", price=" + price + ", title=" + title;
+    }
+    
+    
 }

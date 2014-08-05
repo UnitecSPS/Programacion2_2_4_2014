@@ -12,7 +12,7 @@ import java.util.Date;
  *
  * @author Docente 17082011
  */
-public class ItemForRent {
+public abstract class ItemForRent {
     protected int code, copies=0;
     protected double price;
     protected String title;
@@ -28,7 +28,7 @@ public class ItemForRent {
     }
     
     public ItemForRent(int c){
-        this(c,"UNTITLED",0);
+        this(c,"UNTITLED",1);
     }
     
     public ItemForRent(){
@@ -59,19 +59,15 @@ public class ItemForRent {
         this.copies += copies;
     }
 
-    public void setPrice(double price) {
+    public final void setPrice(double price) {
         this.price = price;
     }
 
-    public void setRate(String rate) {
+    public final void setRate(String rate) {
         this.rate = rate;
     }
     
-    public double rent(int days){
-        if(copies > 0)
-            return price * days;
-        return 0;
-    }
+    public abstract double rent(int days);
     
     public void quienSoy(){
         System.out.println("SOY EL ITEM");

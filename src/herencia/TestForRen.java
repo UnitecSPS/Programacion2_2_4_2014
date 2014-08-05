@@ -16,14 +16,32 @@ public class TestForRen {
         System.out.println(movie);
         movie.code =2;
         
-        ItemForRent ifr0 = new ItemForRent();
-        ifr0.quienSoy();
+        ItemForRent ifr0 = new ItemForRent(){
+            @Override
+            public double rent(int dias){
+                return price * dias;
+            }
+        };
+        System.out.println("test: " + ifr0.rent(20));
+        //ifr0.quienSoy();
+        ItemForRent ifr3 = new ItemForRent(){
+            public void test(){
+                System.out.println("Testing on Demand");
+            }
+            
+            @Override
+            public double rent(int dias){
+                test();
+                return dias * 0.5;
+            }
+        };
+        System.out.println("test3: " + ifr3.rent(20));
         
         //UPCASTING-----------------
         ItemForRent ifr = new MovieForRent(2,"Avatar",9.99);
         ifr.quienSoy();
         
-        ItemForRent ifr2 = new GameForRent();
+        ItemForRent ifr2 = new GameForRent(3,"FIFA 14",50,"PS4");
         ifr2.quienSoy();
         
         //DOWNCASTING----------------------

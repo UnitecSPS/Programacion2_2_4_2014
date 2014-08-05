@@ -17,8 +17,9 @@ public class GameForRent extends ItemForRent{
      * Debe llamar el constructor del padre con los 3 valores importantes
      * ademas recibe de parametro un valor para inicializar la consola
      */
-    public GameForRent(){
-        
+    public GameForRent(int code, String t, double p, String co){
+        super(code,t,p);
+        console = co;
     }
     
     /**
@@ -27,12 +28,29 @@ public class GameForRent extends ItemForRent{
      * igual se evalua la cantidad de copias que se tenga
      * dias adicionales se cobra el 60% del precio
      */
+    @Override
+    public double rent(int days) {
+        
+        if(copies>0){
+            double total = price;
+            if(days > 7)
+                total += (days-7)*(price*0.6);
+            
+            copies--;
+            return total;
+        }
+        return 0;
+    }
     
     /**
       * REDEFINIR toString
      * Para retornar todo lo que ya retorna el padre + la consola + el texto
      *   GAME
      */
+    @Override
+    public String toString(){
+        return "GAME " + super.toString() + "-" + console;
+    }
     
     @Override
     public void quienSoy() {

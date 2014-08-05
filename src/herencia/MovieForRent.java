@@ -7,6 +7,7 @@
 package herencia;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  *
@@ -39,7 +40,18 @@ public class MovieForRent extends ItemForRent {
      *  NORMAL
      */
     public void evaluarEstado(){
-        
+        if(estado.equals("ESTRENO")){
+            Date now = new Date();
+            long diff = now.getTime() - publishAt.getTime();
+            double segs = diff/100;
+            double mins = segs/60;
+            double hours = mins/60;
+            double days = hours/24;
+            double months = days/30;
+
+            if(months > 5)
+                estado = "NORMAL";
+        }
     }
     
     /**
@@ -52,12 +64,32 @@ public class MovieForRent extends ItemForRent {
      *      - los dias adicionales se cobran, cada dia * 50% del precio.
      * 3-restar una copia
      */
+    @Override
+    public double rent(int days) {
+        
+        if(copies>0){
+            double total = price;
+            if(estado.equals("ESTRENO") && days > 3)
+                total += (days-3)*(price*0.5);
+            else if(estado.equals("NORMAL") && days > 5)
+                total += (days-5)*(price*0.5);
+            copies--;
+            return total;
+        }
+        return 0;
+    }
+
+    
     
     /**
      * REDEFINIR toString
      * Para retornar todo lo que ya retorna el padre + el estado de la movie +
      *  MOVIE
      */
+    @Override
+    public String toString(){
+        return "MOVIE " + super.toString() + "-" + estado;
+    }
     
     @Override
     public void quienSoy(){

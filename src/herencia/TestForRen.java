@@ -13,6 +13,7 @@ package herencia;
 public class TestForRen {
     public static void main(String[] args) {
         MovieForRent movie = new MovieForRent(1,"Harry Potter",10);
+        //GameForRent.PS3  =2;
         System.out.println(movie);
         movie.code =2;
         
@@ -41,7 +42,7 @@ public class TestForRen {
         ItemForRent ifr = new MovieForRent(2,"Avatar",9.99);
         ifr.quienSoy();
         
-        ItemForRent ifr2 = new GameForRent(3,"FIFA 14",50,"PS4");
+        ItemForRent ifr2 = new GameForRent(3,"FIFA 14",50, GameForRent.PS3);
         ifr2.quienSoy();
         
         //DOWNCASTING----------------------

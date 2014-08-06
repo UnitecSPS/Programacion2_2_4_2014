@@ -65,7 +65,7 @@ public class MovieForRent extends ItemForRent {
      * 3-restar una copia
      */
     @Override
-    public double rent(int days) {
+    public final double rent(int days) {
         
         if(copies>0){
             double total = price;
@@ -92,7 +92,9 @@ public class MovieForRent extends ItemForRent {
     }
     
     @Override
-    public void quienSoy(){
+    public final void quienSoy(){
         System.out.println("SOY UNA MOVIE");
     }
+    
+    
 }

@@ -83,7 +83,7 @@ public class GameStation {
             items.add(new MovieForRent(1,"title", 100) );
         }
         else{
-            items.add(new GameForRent(1, "title", 0, "consola"));
+            items.add(new GameForRent(1, "title", 0, 0));
         }
     }
 

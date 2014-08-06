@@ -10,16 +10,20 @@ package herencia;
  *
  * @author Docente 17082011
  */
-public class GameForRent extends ItemForRent{
-    public String console;
-    
-    /**
-     * Debe llamar el constructor del padre con los 3 valores importantes
+public final class GameForRent extends ItemForRent{
+    public int console;
+    //enumaracion de consolas disponibles
+    public static final int UNKNOWN = 0;
+    public static final int PS3 = 1;
+    public static final int XBOX = 2;
+    public static final int WII = 3;
+
+     /* Debe llamar el constructor del padre con los 3 valores importantes
      * ademas recibe de parametro un valor para inicializar la consola
      */
-    public GameForRent(int code, String t, double p, String co){
+    public GameForRent(int code, String t, double p, int co){
         super(code,t,p);
-        console = co;
+        setConsole(co);
     }
     
     /**
@@ -30,7 +34,7 @@ public class GameForRent extends ItemForRent{
      */
     @Override
     public double rent(int days) {
-        
+        //PS3 = 1; No puedo!
         if(copies>0){
             double total = price;
             if(days > 7)
@@ -56,5 +60,16 @@ public class GameForRent extends ItemForRent{
     public void quienSoy() {
         System.out.println("SOY UN GAMER");
     }
-    
+
+    private void setConsole(int co) {
+        switch(co){
+            case PS3:
+            case WII:
+            case XBOX:
+                console = co;
+            default:
+                console = UNKNOWN;
+        }
+    }
+        
 }

@@ -19,6 +19,7 @@ public abstract class ItemForRent {
     protected Date publishAt;
     protected String rate;
     
+    
     public ItemForRent(int c, String t, double p){
         code = c;
         title = t;
@@ -35,27 +36,27 @@ public abstract class ItemForRent {
         this(-1);
     }
     
-    public int getCode() {
+    public final int getCode() {
         return code;
     }
 
-    public double getPrice() {
+    public final double getPrice() {
         return price;
     }
 
-    public String getTitle() {
+    public final String getTitle() {
         return title;
     }
 
-    public Date getPublishAt() {
+    public final Date getPublishAt() {
         return publishAt;
     }
 
-    public String getRate() {
+    public final String getRate() {
         return rate;
     }
 
-    public void addCopies(int copies) {
+    public final void addCopies(int copies) {
         this.copies += copies;
     }
 

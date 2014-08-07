@@ -79,5 +79,29 @@ public abstract class ItemForRent {
         return "- code=" + code + ", price=" + price + ", title=" + title;
     }
     
+    public static ItemForRent getInstance(int code){
+        ItemForRent rent = new ItemForRent(code) {
+            
+            @Override
+            public double rent(int days) {
+                return 0;
+            }
+        };
+        return rent;
+    }
+    
+    @Override
+    public boolean equals(Object obj){
+        if(obj instanceof ItemForRent){
+            return this.code == ((ItemForRent)obj).getCode();
+        }
+        else if(obj instanceof Integer){
+            return this.code == (Integer)obj;
+        }
+        else if(obj instanceof String){
+            return this.title.equalsIgnoreCase(obj.toString());
+        }
+        return false;
+    }
     
 }

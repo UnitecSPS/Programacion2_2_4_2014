@@ -42,6 +42,14 @@ public class TestForRen {
         ItemForRent ifr = new MovieForRent(2,"Avatar",9.99);
         ifr.quienSoy();
         
+        if(ifr.equals(2)){
+            System.out.println("\nSI EXISTE!");
+        }
+        
+        if(ifr.equals("AVATAR")){
+            System.out.println("\nSI ES AVATAR!");
+        }
+        
         ItemForRent ifr2 = new GameForRent(3,"FIFA 14",50, GameForRent.PS3);
         ifr2.quienSoy();
         

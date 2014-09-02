@@ -28,7 +28,7 @@ public class FileTest {
             System.out.println("Nombre: " + file.getName());
             System.out.println("Path: " + file.getPath());
             System.out.println("Absolute: " + file.getAbsolutePath());
-            System.out.println("Bytes: " + file.length());
+            System.out.println("Bytes: " + length(file));
             System.out.println("Parent: " + file.getAbsoluteFile().getParentFile().getName());
             
             if(file.isDirectory()){
@@ -120,5 +120,20 @@ public class FileTest {
           4-y cada objeto hijo se manda a la recursion
                 */
             
+    }
+
+    private static long length(File file) {
+        if(file.isFile()){
+            return file.length();
+        }
+        else if(file.isDirectory()){
+            File children[] = file.listFiles();
+            long len = 0;
+            for(File fi : children){
+                len += length(fi);
+            }
+            return len;
+        }
+        return 0;
     }
 }

@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.Date;
 
 /**
  *
@@ -74,6 +75,75 @@ public class Hospital {
             rcods.writeInt(1);
         }
         rcods.close();
+    }
+    
+    private int getCodigo(long offset){
+        int code;
+        try (RandomAccessFile rcods = new RandomAccessFile(ROOT_FOLDER+"/codigos.med", "rw")) {
+            rcods.seek(offset);
+            code = rcods.readInt();
+            rcods.seek(offset);
+            rcods.writeInt(code+1);
+        }
+        catch(IOException e){
+            return -1;
+        }
+        return code;
+    }
+    
+    private int getCodigoDrNuevo(){
+        return getCodigo(0);
+    }
+    
+    private int getCodigoPacNuevo(){
+        return getCodigo(4);
+    }
+    
+    public void addDoctor(String no,EspecialiadMedica em, double mon) throws IOException{
+        rdocs.seek(rdocs.length());
+        //codigo
+        rdocs.writeInt(getCodigoDrNuevo());
+        //nombre
+        rdocs.writeUTF(no);
+        //especialidad
+        rdocs.writeUTF(em.name());
+        //monto
+        rdocs.writeDouble(mon);
+        //dispo
+        rdocs.writeBoolean(true);
+    }
+    
+    public void listarDrsDisponibles()throws IOException{
+        rdocs.seek(0);
+        
+        while(rdocs.getFilePointer() < rdocs.length()){
+            int cod = rdocs.readInt();
+            String no = rdocs.readUTF();
+            String es = rdocs.readUTF();
+            double m = rdocs.readDouble();
+            if( rdocs.readBoolean() )
+                System.out.printf("*%d - %s - %s Costo Consulta Lps. %.1f\n",
+                        cod, no, es, m);
+        }
+    }
+    
+    public void addPaciente(String np,Date fechanac,char gen)throws IOException{
+        rpacs.seek(rpacs.length());
+        //codigo
+        int code = getCodigoPacNuevo();
+        rpacs.writeInt(code);
+        //nombre
+        rpacs.writeUTF(np);
+        //fecha
+        rpacs.writeLong(fechanac.getTime());
+        //genero
+        rpacs.writeChar(gen);
+        //num citas
+        rpacs.writeInt(0);
+        //crear folder
+        String foldername=np+" "+code;
+        File folder = new File(ROOT_FOLDER+"/"+foldername);
+        folder.mkdir();
     }
             
 }

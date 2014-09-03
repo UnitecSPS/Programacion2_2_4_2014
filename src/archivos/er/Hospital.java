@@ -50,6 +50,9 @@ public class Hospital {
     private RandomAccessFile rdocs;
     private RandomAccessFile rpacs;
     public static final String ROOT_FOLDER = "hospital";
+    public static final int CITA_PENDIENTE = 0;
+    public static final int CITA_ATENDIDA = 1;
+    public static final int CITA_CANCELADA = 2;
     
     public Hospital(){
         initfolderroot();
@@ -144,6 +147,106 @@ public class Hospital {
         String foldername=np+" "+code;
         File folder = new File(ROOT_FOLDER+"/"+foldername);
         folder.mkdir();
+    }
+    
+    public void listarPacientes()throws IOException{
+        rpacs.seek(0);
+        while(rpacs.getFilePointer() < rpacs.length()){
+            int cod = rpacs.readInt();
+            String np = rpacs.readUTF();
+            Date nac = new Date(rpacs.readLong());
+            char gen = rpacs.readChar();
+            int ncitas = rpacs.readInt();
+            System.out.printf("- %d, %s Nacido en %s Genero: %c, Citas hechas: %d%n",
+                    cod,np,nac,gen,ncitas);
+        }
+    }
+    
+//     * paciente folder/cita_numcita.med
+// * --------------------------------
+// * int cod dr
+// * long fecha
+// * string sintomas
+// * double monto
+// * int estado
+// * string receta
+    
+    public boolean crearCita(int cp,int dr,Date fecha,String sin)throws IOException{
+        if(pacienteExiste(cp)){
+            if(doctorDisponible(dr)){
+                RandomAccessFile rcita = crearCitaFile(cp);
+                //doctor
+                rcita.writeInt(dr);
+                //fecha
+                rcita.writeLong(fecha.getTime());
+                //sintomas
+                rcita.writeUTF(sin);
+                //monto
+                rcita.writeDouble(0);
+                //estado
+                rcita.writeInt(CITA_PENDIENTE);
+                //reseta
+                rcita.writeUTF("Sin Receta");
+                //close
+                rcita.close();
+            }
+            else{
+                System.out.println("DR no disponible o no existe.");
+            }
+        }
+        else{
+            System.out.println("Paciente no registrado");
+        }
+        
+        return false;
+    }
+
+    private boolean pacienteExiste(int cp)throws IOException {
+        rpacs.seek(0);
+        while(rpacs.getFilePointer() < rpacs.length()){
+            int cod = rpacs.readInt();
+            if(cod == cp)
+                return true;
+            rpacs.readUTF();
+            rpacs.skipBytes(14);
+        }
+        return false;
+    }
+
+    public boolean doctorDisponible(int dr)throws IOException {
+        rdocs.seek(0);
+        
+        while(rdocs.getFilePointer() < rdocs.length()){
+            int cod = rdocs.readInt();
+            long pos = rdocs.getFilePointer();
+            rdocs.readUTF();
+            rdocs.readUTF();
+            rdocs.readDouble();
+            if(  rdocs.readBoolean() && cod == dr ){
+                rdocs.seek(pos);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * LLamar esta funcion solo si el paciente existe, despues de haber
+     * llamado la funcion pacienteExiste, si no
+     * puede que falle
+     * @param cp
+     * @return 
+     */
+    private RandomAccessFile crearCitaFile(int cp)throws IOException {
+        String np = rpacs.readUTF();
+        rpacs.skipBytes(10);
+        int nc = rpacs.readInt()+1;
+        rpacs.seek(rpacs.getFilePointer()-4);
+        rpacs.writeInt(nc);
+        
+        System.out.println("Creando Cita para " + np + " ....");
+        String foldername = ROOT_FOLDER+"/"+np+" "+cp+"/cita_"+nc+".med";
+        return new RandomAccessFile(foldername, "rw");
     }
             
 }

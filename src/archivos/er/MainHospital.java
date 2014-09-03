@@ -8,6 +8,7 @@ package archivos.er;
 
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -25,8 +26,9 @@ public class MainHospital {
         do{
             System.out.println("1- Agregar Doctor");
             System.out.println("2- Agregar Paciente");
-            System.out.println("3- Listar Drs Disponibles");
-            System.out.println("4- Salir");
+            System.out.println("3- Crear Cita");
+            System.out.println("4- Reportes");
+            System.out.println("5- Salir");
             System.out.println("Escoja opcion: ");
             
             try{
@@ -39,7 +41,10 @@ public class MainHospital {
                         addPaciente();
                         break;
                     case 3:
-                        hosp.listarDrsDisponibles();
+                        crearCita();
+                        break;
+                    case 4:
+                        reportes();
                         break;
                 }
             }
@@ -53,7 +58,7 @@ public class MainHospital {
             catch(Exception e){
                 System.out.println("Error: " + e.getMessage());
             }
-        }while(op!=4);
+        }while(op!=5);
     }
 
     private static void addDoctor() throws IOException {
@@ -75,12 +80,40 @@ public class MainHospital {
         //fecha----
         String valores[] = fecha.split("/");
         Calendar c = Calendar.getInstance();
+        
         c.set(Integer.parseInt(valores[2]), 
-                Integer.parseInt(valores[1]), 
+                Integer.parseInt(valores[1])-1, 
                 Integer.parseInt(valores[0]));
         //genero
         char gen = lea.next().charAt(0);
         
         hosp.addPaciente(n, c.getTime(), gen);
     }
+
+    private static void reportes()throws IOException {
+        int op;
+        do{
+            System.out.println("1- Listar DRs Disponibles");
+            System.out.println("2- Listar Pacientes");
+            System.out.println("3- Regresar al Menu Principal");
+            System.out.println("Escoja opcion: ");
+            op = lea.nextInt();
+            
+            switch(op){
+                case 1:
+                    hosp.listarDrsDisponibles();
+                    break;
+                case 2:
+                    hosp.listarPacientes();
+                    break;
+
+            }
+        }while(op!=3);
+    }
+
+    private static void crearCita()throws IOException {
+        hosp.crearCita(1,1,new Date(), "Tiene ebola");
+    }
+    
+    
 }

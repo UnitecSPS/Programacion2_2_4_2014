@@ -162,15 +162,6 @@ public class Hospital {
         }
     }
     
-//     * paciente folder/cita_numcita.med
-// * --------------------------------
-// * int cod dr
-// * long fecha
-// * string sintomas
-// * double monto
-// * int estado
-// * string receta
-    
     public boolean crearCita(int cp,int dr,Date fecha,String sin)throws IOException{
         if(pacienteExiste(cp)){
             if(doctorDisponible(dr)){
@@ -189,6 +180,7 @@ public class Hospital {
                 rcita.writeUTF("Sin Receta");
                 //close
                 rcita.close();
+                return true;
             }
             else{
                 System.out.println("DR no disponible o no existe.");
@@ -245,8 +237,35 @@ public class Hospital {
         rpacs.writeInt(nc);
         
         System.out.println("Creando Cita para " + np + " ....");
-        String foldername = ROOT_FOLDER+"/"+np+" "+cp+"/cita_"+nc+".med";
+        String foldername = getCitaPath(np,cp,nc);
         return new RandomAccessFile(foldername, "rw");
+    }
+    
+    public boolean cancelarCita(int codpac,int numcita)throws IOException{
+        if(pacienteExiste(codpac)){
+            String nombrepac = rpacs.readUTF();
+            String foldername = getCitaPath(nombrepac, codpac, numcita);
+            File cita = new File(foldername);
+            if(cita.exists()){
+                RandomAccessFile rcita = new RandomAccessFile(cita,"rw");
+                rcita.skipBytes(12);
+                rcita.readUTF();
+                rcita.readDouble();
+                rcita.writeInt(CITA_CANCELADA);
+                rcita.close();
+                return true;
+            }
+            else
+                System.out.println("Cita No Encontrada");
+        }
+        else
+            System.out.println("No existe ese paciente");
+        
+        return false;
+    }
+
+    private String getCitaPath(String np, int cp, int nc) {
+        return ROOT_FOLDER+"/"+np+" "+cp+"/cita_"+nc+".med";
     }
             
 }

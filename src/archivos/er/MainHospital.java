@@ -101,7 +101,10 @@ public class MainHospital {
         do{
             System.out.println("1- Listar DRs Disponibles");
             System.out.println("2- Listar Pacientes");
-            System.out.println("3- Regresar al Menu Principal");
+            System.out.println("3- Imprimir una Cita");
+            System.out.println("4- Citas Pendientes por Paciente");
+            System.out.println("5- Total Ingresos");
+            System.out.println("6- Regresar al Menu Principal");
             System.out.println("Escoja opcion: ");
             op = lea.nextInt();
             
@@ -112,9 +115,16 @@ public class MainHospital {
                 case 2:
                     hosp.listarPacientes();
                     break;
-
+                case 3:
+                    printCita();
+                    break;
+                case 4:
+                    citasPorPaciente();
+                    break;
+                case 5:
+                    System.out.println("Ingresos: " + hosp.ingresos());
             }
-        }while(op!=3);
+        }while(op!=6);
     }
     
     private static void citas()throws IOException {
@@ -122,7 +132,8 @@ public class MainHospital {
         do{
             System.out.println("1- Crear Cita");
             System.out.println("2- Cancelar Cita");
-            System.out.println("3- Regresar al Menu Principal");
+            System.out.println("3- Atender Cita");
+            System.out.println("4- Regresar al Menu Principal");
             System.out.println("Escoja opcion: ");
             op = lea.nextInt();
             
@@ -133,9 +144,10 @@ public class MainHospital {
                 case 2:
                     cancelarCita();
                     break;
-
+                case 3:
+                    atenderCita();
             }
-        }while(op!=3);
+        }while(op!=4);
     }
 
     private static void crearCita()throws IOException {
@@ -166,6 +178,34 @@ public class MainHospital {
             System.out.println("Cita exitosamente cancelada");
         else
             System.out.println("Cita no se pudo cancelar");
+    }
+
+    private static void atenderCita()throws IOException {
+        System.out.println("Codigo Paciente: ");
+        int codpac = lea.nextInt();
+        System.out.println("Numero de la Cita: ");
+        int numcita = lea.nextInt();
+        System.out.println("Receta: ");
+        String receta = lea.next();
+        
+        if(hosp.atenderCita(codpac, numcita, receta))
+            System.out.println("Cita Atendida.");
+        else
+            System.out.println("Cita no se pudo atender");
+    }
+
+    private static void printCita()throws IOException {
+        System.out.println("Codigo Paciente: ");
+        int codpac = lea.nextInt();
+        System.out.println("Numero de la Cita: ");
+        int numcita = lea.nextInt();
+        hosp.printCita(codpac, numcita);
+    }
+
+    private static void citasPorPaciente()throws IOException {
+        System.out.println("Codigo Paciente: ");
+        int codpac = lea.nextInt();
+        hosp.citasPendientesPorPaciente(codpac);
     }
 
     

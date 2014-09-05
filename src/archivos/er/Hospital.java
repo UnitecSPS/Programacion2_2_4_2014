@@ -214,12 +214,23 @@ public class Hospital {
             rdocs.readUTF();
             rdocs.readUTF();
             rdocs.readDouble();
-            if(  rdocs.readBoolean() && cod == dr ){
+            boolean dispo = rdocs.readBoolean();
+            
+            if( cod == dr ){
                 rdocs.seek(pos);
-                return true;
+                return dispo;
             }
+            
         }
         return false;
+    }
+    
+    public boolean doctorExiste(int dr)throws IOException{
+        boolean dispo = doctorDisponible(dr);
+        //si dispo es true por ende el dr existe
+        //puede ser que dispo es false pero el puntero no esta al final
+        //lo que significa que EXISTE pero no esta disponible
+        return dispo || rdocs.getFilePointer() < rdocs.length();
     }
 
     /**
@@ -266,6 +277,184 @@ public class Hospital {
 
     private String getCitaPath(String np, int cp, int nc) {
         return ROOT_FOLDER+"/"+np+" "+cp+"/cita_"+nc+".med";
+    }
+
+    public boolean atenderCita(int codpac, int numcita, String receta)throws IOException{
+        if(pacienteExiste(codpac)){
+            String nompac = rpacs.readUTF();
+            String citapath = getCitaPath(nompac, codpac, numcita);
+            File cita = new File(citapath);
+            
+            if(cita.exists()){
+                try(RandomAccessFile rcita = new RandomAccessFile(cita,"rw")){
+                    //leo dr
+                    int coddr = rcita.readInt();
+                    if(doctorDisponible(coddr)){
+                        //imprimo nombre de dr
+                        String drname = rdocs.readUTF();
+                        System.out.println("Cita Atendida por el Dr " + drname);
+                        //saco su monto
+                        rdocs.readUTF();//leo la especialidad
+                        double monto = rdocs.readDouble();
+                        System.out.println("Monto a Pagar: " + monto);
+                        //escribo en el archivo de citas
+                        rcita.readLong();//leo la fecha
+                        rcita.readUTF();//leo los sintomas
+                        rcita.writeDouble(monto);//escribo el monto
+                        rcita.writeInt(CITA_ATENDIDA);//escribo el nuevo estado
+                        rcita.writeUTF(receta);//escribo la receta
+                        return true;
+                    }
+                    else{
+                        System.out.println("Dr YA NO ESTA DISPOBIBLE...Cancelando..");
+                        rcita.readLong();//fecha
+                        rcita.readUTF();//sintomas
+                        rcita.readDouble();//monto
+                        rcita.writeInt(CITA_CANCELADA);
+                    }
+                }
+            }
+            else
+                System.out.println("Cita No Existe");
+        }
+        else
+            System.out.println("Paciente No Existe");
+        
+        return false;
+    }
+    
+    public void printCita(int codpac, int numcita)throws IOException{
+        if(pacienteExiste(codpac)){
+            String nompac = rpacs.readUTF();
+            String citapath = getCitaPath(nompac, codpac, numcita);
+            File cita = new File(citapath);
+            
+            if(cita.exists()){
+                System.out.println("Cita de " + nompac);
+                RandomAccessFile rcita =  new RandomAccessFile(cita,"rw");
+                //leo dr
+                int coddr = rcita.readInt();
+                if(doctorExiste(coddr)){
+                    //el puntero esta antes del nombre
+                    String drname = rdocs.readUTF();
+                    System.out.println("Cita Atendida por "+coddr+"-" +
+                            drname);
+                    //fecha
+                    System.out.println("Fecha: " + new Date(rcita.readLong()));
+                    //sintomas
+                    System.out.println("Sintomas: " + rcita.readUTF());
+                    //Monto
+                    System.out.println("Monto: Lps."+ rcita.readDouble());
+                    //estado
+                    System.out.print("Estado: ");
+                    switch(rcita.readInt()){
+                        case CITA_ATENDIDA:
+                            System.out.println("Atendida");
+                            break;
+                        case CITA_CANCELADA:
+                            System.out.println("Cancelada");
+                            break;
+                        default:
+                            System.out.println("Pendiente");
+                    }
+                    //receta
+                    System.out.println("Receta: " + rcita.readUTF());
+                    rcita.close();
+                }
+            }
+            else
+                System.out.println("Cita No Existe");
+        }
+        else
+            System.out.println("Paciente No Existe");
+    }
+    
+    public void citasPendientesPorPaciente(int codpac)throws IOException{
+        if(pacienteExiste(codpac)){
+            String nompac = rpacs.readUTF();
+            //agarrar su folder y listar sus archivos
+            File folder = new File(ROOT_FOLDER+"/"+nompac + " " +codpac);
+            File citas[] = folder.listFiles();
+            for(File cita : citas){
+                try(RandomAccessFile rcita = new RandomAccessFile(cita,"rw")){
+                    //numero de cita
+                    int numcita = getNumCitaPorPath(cita.getName());
+                    int coddr = rcita.readInt();
+                    long fecha = rcita.readLong();
+                    String sintomas = rcita.readUTF();
+                    rcita.readDouble();
+                    int estado = rcita.readInt();
+                    rcita.readUTF();//receta
+
+                    if(estado == CITA_PENDIENTE){
+                        //se supone que el dr existe! sino, como se hizo la cita?
+                        doctorExiste(coddr);
+                        String drname = rdocs.readUTF();
+                        //analizar fecha
+                        Date now = new Date();
+                        String fechaalerta = "A Tiempo";
+                        if( now.getTime() > fecha)
+                            fechaalerta = "Alerta! La fecha ya paso";
+                        
+                        System.out.printf("-Cita #%d asignada al Dr. %s, Pactada para %s, Por motivos de %s, %s%n",
+                                numcita,drname,new Date(fecha),sintomas,fechaalerta);
+                    }
+                }
+            }
+        }
+        else
+            System.out.println("Paciente No Existe");
+    }
+
+    private int getNumCitaPorPath(String name) {
+        String vals[] = name.split("_");
+        //el val[1] deberia ser numcita.med
+        String numero = vals[1].substring(0,vals[1].indexOf('.'));
+        return Integer.parseInt(numero);
+    }
+    
+    public void cambiarDisponibilidadDr(int coddr)throws IOException{
+        boolean dispo = doctorDisponible(coddr);
+        if(dispo){
+            //activo, preguntar por desactivar
+        }
+        else if(rdocs.getFilePointer() < rdocs.length()){
+            //desactivado, preguntar por activar
+        }
+        else{
+            System.out.println("Doctor No existe");
+        }
+    }
+    
+    public double ingresos()throws IOException{
+        double tot =0;
+        File folder = new File(ROOT_FOLDER);
+        File folderes[] = folder.listFiles();
+        for(File pacfolder : folderes){
+            if(pacfolder.isDirectory()){
+                tot += montoPorPaciente(pacfolder);
+            }
+        }
+        return tot;
+    }
+    
+    private double montoPorPaciente(File pacfolder)throws IOException{
+        double tot=0;
+        File citas[] = pacfolder.listFiles();
+        for(File cita : citas){
+            try(RandomAccessFile rcita = new RandomAccessFile(cita,"rw")){
+                //nombre de dr y fecha
+                rcita.skipBytes(12);
+                rcita.readUTF();//sintomas
+                double monto = rcita.readDouble();
+                int estado = rcita.readInt();
+                rcita.readUTF();//receta
+                
+                if(estado == CITA_ATENDIDA)
+                    tot+=monto;
+            }
+        }
+        return tot;
     }
             
 }

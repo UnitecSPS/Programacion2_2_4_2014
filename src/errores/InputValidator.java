@@ -14,6 +14,7 @@ import java.util.Scanner;
  * @author Docente 17082011
  */
 public class InputValidator {
+
     public static void main(String[] args) {
         Scanner lea = new Scanner(System.in);
         
